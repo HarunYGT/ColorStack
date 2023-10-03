@@ -1,6 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -8,10 +9,15 @@ public class GameManager : MonoBehaviour
     GameObject choosedStand;
     Ring ring;
     public bool isMove;
+    [SerializeField] private TextMeshProUGUI levelText;
 
-    // Will do.
     public int targetColorNum;
     public int completedColorNum;
+
+    void Start()
+    {
+        levelText.text = "Level : " + SceneManager.GetActiveScene().buildIndex.ToString();
+    }
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
@@ -97,7 +103,13 @@ public class GameManager : MonoBehaviour
         completedColorNum++;
         if(completedColorNum == targetColorNum)
         {
-            Debug.Log("Completed!");
+            StartCoroutine(LoadNextLevel());
         }
+    }
+    IEnumerator LoadNextLevel()
+    {
+        yield return new WaitForSeconds(2f);
+        PlayerPrefs.SetInt("Level",SceneManager.GetActiveScene().buildIndex+1);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex+1);
     }
 }
